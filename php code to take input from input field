@@ -1,0 +1,31 @@
+<?php
+// Get the input from the input field
+$input = $_POST['input'];
+
+// Validate the input as a valid URL
+if (filter_var($input, FILTER_VALIDATE_URL)) {
+  // Get the file name from the URL
+  $file_name = basename($input);
+
+  // Set the local path to save the file
+  $local_path = "downloads/" . $file_name;
+
+  // Download the remote file using cURL
+  $ch = curl_init($input);
+  $fp = fopen($local_path, 'wb');
+  curl_setopt($ch, CURLOPT_FILE, $fp);
+  curl_setopt($ch, CURLOPT_HEADER, 0);
+  curl_exec($ch);
+  curl_close($ch);
+  fclose($fp);
+
+  // Check if the file was downloaded successfully
+  if (file_exists($local_path)) {
+    echo "File downloaded successfully: " . $local_path;
+  } else {
+    echo "File download failed: " . $input;
+  }
+} else {
+  echo "Invalid input: " . $input;
+}
+?>
